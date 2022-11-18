@@ -15,3 +15,5 @@ Esse é um projeto feito com react para fins academicos
 - rode o comando na pasta raiz: `npm start` e abra no navegador [http://localhost:3000](http://localhost:3000)
 
 ## Demonstração
+
+Acesse esse link [https://financasxyz.netlify.app](https://financasxyz.netlify.app)
