@@ -1,4 +1,4 @@
-import { createServer, Model, Response } from "miragejs";
+import { createServer, Model } from "miragejs";
 import { items } from "./data/items";
 
 export function makeServer({ environment = "test" }) {
