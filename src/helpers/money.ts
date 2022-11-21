@@ -1,5 +1,4 @@
 export const formatForMonetary = (money: number): number => {
-  console.log(money);
   let resultToString = money.toString();
   let manyDigitsAfterTheDecimalPoint = resultToString.substring(
     resultToString.indexOf(".") + 1,
