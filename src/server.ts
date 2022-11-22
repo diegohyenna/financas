@@ -1,5 +1,6 @@
 import { createServer, Model } from "miragejs";
 import { items } from "./data/items";
+import { addOnDate, subtractOnDate } from "./helpers/dateFilter";
 
 export function makeServer({ environment = "test" }) {
   return createServer({
@@ -14,35 +15,52 @@ export function makeServer({ environment = "test" }) {
       server.db.loadData({
         items: [
           {
-            date: new Date(2022, 10, 6),
+            date: addOnDate(new Date(Date.now()), "day", 1),
             category: "food",
             title: "McDonalds",
             value: 32.12,
           },
           {
-            date: new Date(2022, 10, 15),
+            date: addOnDate(new Date(Date.now()), "day", 2),
             category: "food",
             title: "Burger King",
             value: 28,
           },
           {
-            date: new Date(2022, 10, 16),
+            date: addOnDate(new Date(Date.now()), "day", 2),
             category: "rent",
             title: "Aluguel Apt",
             value: 2300,
           },
           {
-            date: new Date(2022, 10, 18),
+            date: addOnDate(new Date(Date.now()), "day", 5),
             category: "salary",
             title: "Salário ACME",
             value: 4500,
           },
           {
-            date: new Date(2022, 11, 18),
+            date: subtractOnDate(new Date(Date.now()), "day", 5),
+            category: "food",
+            title: "ifood",
+            value: 567.98,
+          },
+          {
+            date: addOnDate(new Date(Date.now()), "month", 1),
             category: "salary",
             title: "Salário ACME",
             value: 4500,
           },
+          {
+            date: addOnDate(new Date(Date.now()), "month", 1),
+            category: "rent",
+            title: "Aluguel",
+            value: 2500,
+          },
+        ],
+        categories: [
+          { type: "food", title: "Alimentação", color: "blue", expense: true },
+          { type: "rent", title: "Aluguel", color: "brown", expense: true },
+          { type: "salary", title: "Salário", color: "green", expense: false },
         ],
       });
     },
@@ -50,7 +68,6 @@ export function makeServer({ environment = "test" }) {
     routes() {
       this.namespace = "api";
 
-      // Clinicas
       this.get("items", () => {
         return this.schema.all("items");
       });
@@ -77,6 +94,15 @@ export function makeServer({ environment = "test" }) {
         let id = request.params.id;
         (schema as any).items.find(id).destroy();
         return items;
+      });
+
+      this.get("categories", () => {
+        return this.schema.all("categories");
+      });
+
+      this.post("categories", (schema, request) => {
+        const data = JSON.parse(request.requestBody);
+        return schema.create("categories", data);
       });
     },
   });

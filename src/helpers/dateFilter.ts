@@ -1,19 +1,22 @@
 import { Item } from "../types/Item";
 import dayjs from "dayjs";
 
-export const getCurrentMonth = () => {
+export const getCurrentMountAndYear = () => {
   let now = new Date();
   return `${now.getFullYear()}-${now.getMonth() + 1}`;
 };
 
 export const filterListByMonth = (list: Item[], date: string): Item[] => {
   let newList: Item[] = [];
-  let [year, month] = date.split("-");
+  let [currentYear, currentMonth] = date.split("-");
 
   for (let i in list) {
+    let year = dayjs(list[i].date).year();
+    let month = dayjs(list[i].date).month();
+
     if (
-      list[i].date.getFullYear() === parseInt(year) &&
-      list[i].date.getMonth() + 1 === parseInt(month)
+      year === parseInt(currentYear) &&
+      month + 1 === parseInt(currentMonth)
     ) {
       newList.push(list[i]);
     }
@@ -33,9 +36,9 @@ const ascendingSortedList = (list: Item[]): Item[] => {
 };
 
 export const formatDate = (date: Date): string => {
-  let year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
+  let year = dayjs(date).year();
+  let month = dayjs(date).month() + 1;
+  let day = dayjs(date).date();
 
   return `${addZeroToDate(day)}/${addZeroToDate(month)}/${year}`;
 };

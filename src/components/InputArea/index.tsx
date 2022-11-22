@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as C from "./styles";
 import { Item } from "../../types/Item";
 
-import { categories } from "../../data/categories";
 import { newDateAdjusted } from "../../helpers/dateFilter";
+import { getCategories } from "../../services/api";
 
 type Props = {
   onAdd: (item: Item) => void;
@@ -14,8 +14,20 @@ export const InputArea = ({ onAdd }: Props) => {
   const [categoryField, setCategoryField] = useState("");
   const [titleField, setTitleField] = useState("");
   const [valueField, setValueField] = useState("");
+  const [categoryKeys, setCategoryKeys] = useState<any>([]);
 
-  let categoryKeys: string[] = Object.keys(categories);
+  useEffect(() => {
+    function Fetch() {
+      getCategories().then((result) => {
+        let categoriesArray = [];
+        for (let category of result.categories) {
+          categoriesArray.push(category.type);
+        }
+        setCategoryKeys(categoriesArray);
+      });
+    }
+    Fetch();
+  }, []);
 
   const handleAddEvent = () => {
     let errors: string[] = [];
@@ -91,11 +103,12 @@ export const InputArea = ({ onAdd }: Props) => {
         >
           <>
             <option></option>
-            {categoryKeys.map((key, index) => (
-              <option key={index} value={key}>
-                {categories[key].title}
-              </option>
-            ))}
+            {categoryKeys.length > 0 &&
+              categoryKeys.map((key: any, index: any) => (
+                <option key={index} value={key}>
+                  {key}
+                </option>
+              ))}
           </>
         </C.Select>
       </C.InputGroup>

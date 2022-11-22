@@ -2,28 +2,37 @@ import { useState, useEffect } from "react";
 import * as C from "./App.styles";
 import { Item } from "./types/Item";
 import { categories } from "./data/categories";
-import { items } from "./data/items";
-import { getCurrentMonth, filterListByMonth } from "./helpers/dateFilter";
+
+import {
+  filterListByMonth,
+  getCurrentMountAndYear,
+} from "./helpers/dateFilter";
 import { TableArea } from "./components/TableArea";
 import { InfoArea } from "./components/InfoArea";
 import { InputArea } from "./components/InputArea";
-import { getItems } from "./services/api";
 import { formatForMonetary } from "./helpers/money";
+import { getItems } from "./services/api";
 
 const App = () => {
-  const [list, setList] = useState(items);
+  const [list, setList] = useState<Item[]>([]);
   const [filteredList, setFilteredList] = useState<Item[]>([]);
-  const [currentMonth, setCurrentMonth] = useState(getCurrentMonth());
+  const [currentMonthAndYear, setCurrentMonthAndYear] = useState(
+    getCurrentMountAndYear()
+  );
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
 
   useEffect(() => {
-    setFilteredList(filterListByMonth(list, currentMonth));
-  }, [list, currentMonth]);
+    getItems().then((result) => {
+      setList(result.items);
+    });
+  }, []);
 
   useEffect(() => {
-    getItems();
+    setFilteredList(filterListByMonth(list, currentMonthAndYear));
+  }, [list, currentMonthAndYear]);
 
+  useEffect(() => {
     let incomeCount = 0;
     let expenseCount = 0;
 
@@ -40,13 +49,15 @@ const App = () => {
   }, [filteredList]);
 
   const handleMonthChange = (newMonth: string) => {
-    setCurrentMonth(newMonth);
+    setCurrentMonthAndYear(newMonth);
   };
 
   const handleAddItem = (item: Item) => {
-    let newList = [...list];
-    newList.push(item);
-    setList(newList);
+    getItems().then((result) => {
+      let newList = [...result.items];
+      newList.push(item);
+      setList(newList);
+    });
   };
 
   return (
@@ -56,7 +67,7 @@ const App = () => {
       </C.Header>
       <C.Body>
         <InfoArea
-          currentMonth={currentMonth}
+          currentMonth={currentMonthAndYear}
           onMonthChange={handleMonthChange}
           income={income}
           expense={expense}

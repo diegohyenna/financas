@@ -1,7 +1,12 @@
 const getItems = () => {
-  fetch("api/items").then(async (result) => {
-    console.log(await result.json());
+  return fetch("api/items").then(async (result) => {
+    return await result.json();
+  });
+};
+const getCategories = () => {
+  return fetch("/api/categories").then(async (result: any) => {
+    return await result.json();
   });
 };
 
-export { getItems };
+export { getItems, getCategories };
